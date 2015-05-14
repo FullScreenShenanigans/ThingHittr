@@ -52,7 +52,7 @@ interface IThingHitCheck {
 
 /**
  * Callback for when a Thing collides with another Thing.
- */ 
+ */
 interface IThingHitFunction {
     (thing: IThing, other: IThing): void;
 }
@@ -423,7 +423,9 @@ class ThingHittr {
      *                                       to be cached.
      * @return {Object<Function>}
      */
-    private cacheFunctionGroup(functions: IThingHitCheckGeneratorContainer | IThingHitFunctionGeneratorContainer): IThingHitCheckContainer | IThingHitFunctionContainer {
+    private cacheFunctionGroup(
+        functions: IThingHitCheckGeneratorContainer | IThingHitFunctionGeneratorContainer
+        ): IThingHitCheckContainer | IThingHitFunctionContainer {
         var output: IThingHitCheckContainer | IThingHitFunctionContainer = {},
             i: string;
 
