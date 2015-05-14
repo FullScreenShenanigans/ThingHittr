@@ -304,7 +304,7 @@ class ThingHittr {
         }
 
         this.cachedTypeNames[typeName] = true;
-        this.checkHitsOf[typeName] = this.generateHitsCheck(typeName);
+        this.checkHitsOf[typeName] = this.generateHitsCheck(typeName).bind(this);
     }
 
     /**
@@ -366,7 +366,7 @@ class ThingHittr {
                         }
 
                         // If they do hit, call the corresponding hitFunction
-                        if (this.hitCheck(thing, other)) {
+                        if (hitCheck(thing, other)) {
                             this.hitFunctions[typeName][other[this.keyGroupName]](thing, other);
                         }
                     }
