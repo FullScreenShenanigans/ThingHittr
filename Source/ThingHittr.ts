@@ -3,17 +3,17 @@
 interface IThingHittrSettings {
     // The Function generators used for each group to test if a contained 
     // Thing may collide, keyed by group name.
-    globalCheckGenerators: any;
+    globalCheckGenerators: IThingGroupCheckGeneratorContainer;
 
     // The Function generators used for hitChecks, as an Object with sub-Objects
     // for each group, which have sub-Objects for each group they may collide 
     // with.
-    hitCheckGenerators: any;
+    hitCheckGenerators: IThingHitCheckGeneratorGroupContainer;
 
     // The Function generators used for collisions, as an Object with 
     // sub- Objects for each group, which have sub- Objects for each group they
     // they may collide with.
-    hitFunctionGenerators: any;
+    hitFunctionGenerators: IThingHitFunctionGeneratorGroupContainer;
 
     // The listing of the names of groups that may collide with each other.
     groupNames: string[];
@@ -30,20 +30,150 @@ interface IThingHittrSettings {
     keyGroupName?: string;
 }
 
+// Determines whether a group of Things may all have hits checked.
+interface IThingGroupCheck {
+    (): boolean;
+}
+
+/**
+ * Checks all possible hits for a single Thing, calling the respective hit 
+ * Function when any are found.
+ */
+interface IThingHitsCheck {
+    (thing: IThing): void;
+}
+
+/** 
+ * Determines whether a Thing collides with another Thing.
+ */
 interface IThingHitCheck {
     (thing: IThing, other: IThing): boolean;
 }
 
+/**
+ * Callback for when a Thing collides with another Thing.
+ */ 
+interface IThingHitFunction {
+    (thing: IThing, other: IThing): void;
+}
+
+/**
+ * Generator Function to create IThingGroupCheck Functions.
+ */
+interface IThingGroupCheckGenerator {
+    (): IThingGroupCheck;
+}
+
+/**
+ * Generator Function to create IThingHitCheck Functions.
+ */
+interface IThingHitsCheckGenerator {
+    (): IThingHitsCheck;
+}
+
+/**
+ * Generator Function to create IThingHitCheck Functions.
+ */
 interface IThingHitCheckGenerator {
     (): IThingHitCheck;
 }
 
-interface IThingHitCheckTypeContainer {
+/**
+ * Generator Function to generate IThingHitFunction Functions.
+ */
+interface IThingHitFunctionGenerator {
+    (): IThingHitFunction;
+}
+
+/**
+ * Container to hold IThingGroupCheck Functions, keyed by their respective group.
+ */
+interface IThingGroupCheckContainer {
+    [i: string]: IThingGroupCheck;
+}
+
+/**
+ * Container to hold IThingHitsCheck Functions, keyed by their respective type.
+ */
+interface IThingHitsCheckContainer {
+    [i: string]: IThingHitsCheck;
+}
+
+/**
+ * Container to hold IThingHitCheck Functions, keyed by their respective group.
+ */
+interface IThingHitCheckContainer {
     [i: string]: IThingHitCheck;
 }
 
+/**
+ * Container to hold IThingHitFunction groups, keyed by their respective types.
+ */
+interface IThingHitFunctionContainer {
+    [i: string]: IThingHitFunction;
+}
+
+/**
+ * Container to hold IThingHitCheckContainer containers, keyed by their 
+ * respective types.
+ */
+interface IThingHitCheckGroupContainer {
+    [i: string]: IThingHitCheckContainer;
+}
+
+/**
+ * Container to hold IThingHitFunctionContainer containers, keyed by their 
+ * respective groups.
+ */
+interface IThingHitFunctionGroupContainer {
+    [i: string]: IThingHitFunctionContainer;
+}
+
+/**
+ * Container to hold IThingGroupCheckGenerator Functions, keyed by their
+ * respective groups.
+ */
+interface IThingGroupCheckGeneratorContainer {
+    [i: string]: IThingGroupCheckGenerator;
+}
+
+/**
+ * Container to hold IThingHitCheckGenerator Functions, keyed by their 
+ * respective groups.
+ */
 interface IThingHitCheckGeneratorContainer {
     [i: string]: IThingHitCheckGenerator;
+}
+
+/**
+ * Container to hold IThingHitFunctionGenerator Functions, keyed by their
+ * respective types.
+ */
+interface IThingHitFunctionGeneratorContainer {
+    [i: string]: IThingHitFunctionGenerator;
+}
+
+/**
+ * Container to hold IThingHitCheckGeneratorContainer containers, keyed by their
+ * respective groups.
+ */
+interface IThingHitCheckGeneratorGroupContainer {
+    [i: string]: IThingHitCheckGeneratorContainer;
+}
+
+/**
+ * Container to hold IThingHitFunctionGeneratorContainer containers, keyed by
+ * their respective groups.
+ */
+interface IThingHitFunctionGeneratorGroupContainer {
+    [i: string]: IThingHitFunctionGeneratorContainer;
+}
+
+/**
+ * Cache lookup for whether a Thing has had its hit checks generated.
+ */
+interface IThingGeneratedListing {
+    [i: string]: boolean;
 }
 
 /**
@@ -55,36 +185,37 @@ interface IThingHitCheckGeneratorContainer {
  * @author "Josh Goldberg" <josh@fullscreenmario.com>
  */
 class ThingHittr {
-    // 
-    public checkHitsOf: any;
+    // Contains the Functions used to completely check the hits of a single
+    // Thing (publically available).
+    public checkHitsOf: IThingHitsCheckContainer;
 
     // Names of groups to check collisions within.
     private groupNames: string[];
 
     // Check Functions for Things within groups to see if they're able to
     // collide in the first place.
-    private globalChecks: any;
+    private globalChecks: IThingGroupCheckContainer;
 
     // Collision detection Functions to check two Things for collision.
-    private hitChecks: any;
+    private hitChecks: IThingHitCheckGroupContainer;
 
     // Hit Function callbacks for when two Things do collide.
-    private hitFunctions: any;
+    private hitFunctions: IThingHitFunctionGroupContainer;
 
     // Function generators for globalChecks.
-    private globalCheckGenerators: any;
+    private globalCheckGenerators: IThingGroupCheckGeneratorContainer;
 
     // Function generators for hitChecks.
-    private hitCheckGenerators: any;
+    private hitCheckGenerators: IThingHitCheckGeneratorGroupContainer;
 
     // Function generators for hitFunctions.
-    private hitFunctionGenerators: any;
+    private hitFunctionGenerators: IThingHitFunctionGeneratorGroupContainer;
 
     // A listing of which groupNames have had their hitCheck cached.
-    private cachedGroupNames: any;
+    private cachedGroupNames: IThingGeneratedListing;
 
     // A listing of which types have had their checkHitsOf cached.
-    private cachedTypeNames: any;
+    private cachedTypeNames: IThingGeneratedListing;
 
     // The key under which Things store their number of quadrants.
     private keyNumQuads: string;
@@ -165,11 +296,11 @@ class ThingHittr {
         }
 
         if (typeof this.hitCheckGenerators[groupName] !== "undefined") {
-            this.hitChecks[typeName] = this.cacheFunctionGroup(this.hitCheckGenerators[groupName]);
+            this.hitChecks[typeName] = <IThingHitCheckContainer>this.cacheFunctionGroup(this.hitCheckGenerators[groupName]);
         }
 
         if (typeof this.hitFunctionGenerators[groupName] !== "undefined") {
-            this.hitFunctions[typeName] = this.cacheFunctionGroup(this.hitFunctionGenerators[groupName]);
+            this.hitFunctions[typeName] = <IThingHitFunctionContainer>this.cacheFunctionGroup(this.hitFunctionGenerators[groupName]);
         }
 
         this.cachedTypeNames[typeName] = true;
@@ -182,7 +313,7 @@ class ThingHittr {
      * @param {String} typeName   The type of the Things to generate for.
      * @return {Function}
      */
-    generateHitsCheck(typeName: string): any {
+    generateHitsCheck(typeName: string): IThingHitsCheck {
         /**
          * Collision detection Function for a Thing. For each Quadrant the Thing
          * is in, for all groups within that Function that the Thing's type is 
@@ -193,9 +324,9 @@ class ThingHittr {
          * @param {Thing} thing
          */
         return function checkHitsOf(thing: IThing): void {
-            var others: any,
+            var others: IThing[],
                 other: IThing,
-                hitCheck: any,
+                hitCheck: IThingHitCheck,
                 i: number,
                 j: number,
                 k: number;
@@ -257,8 +388,8 @@ class ThingHittr {
      *                   touching.
      */
     checkHit(thing: IThing, other: IThing, thingType: string, otherGroup: string): boolean {
-        var checks: any = this.hitChecks[thingType],
-            check: any;
+        var checks: IThingHitCheckContainer = this.hitChecks[thingType],
+            check: IThingHitCheck;
 
         if (!checks) {
             throw new Error("No hit checks defined for " + thingType + ".");
@@ -280,7 +411,7 @@ class ThingHittr {
      * @param {String} groupName
      * @return {Function}
      */
-    private cacheGlobalCheck(groupName: string): any {
+    private cacheGlobalCheck(groupName: string): IThingGroupCheck {
         return this.globalCheckGenerators[groupName]();
     }
 
@@ -292,8 +423,8 @@ class ThingHittr {
      *                                       to be cached.
      * @return {Object<Function>}
      */
-    private cacheFunctionGroup(functions: any): any {
-        var output: any = {},
+    private cacheFunctionGroup(functions: IThingHitCheckGeneratorContainer | IThingHitFunctionGeneratorContainer): IThingHitCheckContainer | IThingHitFunctionContainer {
+        var output: IThingHitCheckContainer | IThingHitFunctionContainer = {},
             i: string;
 
         for (i in functions) {
