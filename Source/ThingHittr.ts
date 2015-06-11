@@ -1,4 +1,5 @@
 /// <reference path="References/QuadsKeepr.d.ts" />
+/// <reference path="ThingHittr.d.ts" />
 
 module ThingHittr {
     "use strict";
