@@ -10,7 +10,7 @@ module ThingHittr {
      * against configurable sets of other groups, along with performance  
      * optimizations to help reduce over-reoptimization of Functions.
      */
-    class ThingHittr implements IThingHittr {
+    export class ThingHittr implements IThingHittr {
         // Contains the Functions used to completely check the hits of a single
         // Thing (publically available).
         public checkHitsOf: IThingHitsCheckContainer;
