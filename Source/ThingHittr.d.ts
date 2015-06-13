@@ -1,36 +1,48 @@
 declare module ThingHittr {
     interface IThingHittrSettings {
-        // The Function generators used for each group to test if a contained 
-        // Thing may collide, keyed by group name.
+        /**
+         * The Function generators used for each group to test if a contained
+         * Thing may collide, keyed by group name.
+         */
         globalCheckGenerators: IThingGroupCheckGeneratorContainer;
 
-        // The Function generators used for hitChecks, as an Object with sub-Objects
-        // for each group, which have sub-Objects for each group they may collide 
-        // with.
+        /**
+         * The Function generators used for hitChecks, as an Object with sub-Objects
+         * for each group, which have sub-Objects for each group they may collide 
+         * with.
+         */
         hitCheckGenerators: IThingHitCheckGeneratorGroupContainer;
 
-        // The Function generators used for collisions, as an Object with 
-        // sub- Objects for each group, which have sub- Objects for each group they
-        // they may collide with.
+        /**
+         * The Function generators used for collisions, as an Object with 
+         * sub- Objects for each group, which have sub- Objects for each group they
+         * they may collide with.
+         */
         hitFunctionGenerators: IThingHitFunctionGeneratorGroupContainer;
 
-        // The listing of the names of groups that may collide with each other.
+        /**
+         * The listing of the names of groups that may collide with each other.
+         */
         groupNames: string[];
 
-        // The key under which Things store their number of quadrants (by default, 
-        // "numquads").
+        /**
+         * The key under which Things store their number of quadrants (by default, "numquads").
+         */
         keyNumQuads?: string;
 
-        // They key under which Things store their quadrants (by default, "quadrants").
+        /**
+         * The key under which Things store their quadrants (by default, "quadrants").
+         */
         keyQuadrants?: string;
 
-        // The key under which Things store which group they fall under (by default,
-        // "group").
+        /**
+         * The key under which Things store which group they fall under (by default, "group").
+         */
         keyGroupName?: string;
     }
 
     // Determines whether a group of Things may all have hits checked.
-    interface IThingGroupCheck {
+    export interface IThingGroupCheck {
         (): boolean;
     }
 
@@ -38,77 +50,77 @@ declare module ThingHittr {
      * Checks all possible hits for a single Thing, calling the respective hit 
      * Function when any are found.
      */
-    interface IThingHitsCheck {
+    export interface IThingHitsCheck {
         (thing: QuadsKeepr.IThing): void;
     }
 
     /** 
      * Determines whether a Thing collides with another Thing.
      */
-    interface IThingHitCheck {
+    export interface IThingHitCheck {
         (thing: QuadsKeepr.IThing, other: QuadsKeepr.IThing): boolean;
     }
 
     /**
      * Callback for when a Thing collides with another Thing.
      */
-    interface IThingHitFunction {
+    export interface IThingHitFunction {
         (thing: QuadsKeepr.IThing, other: QuadsKeepr.IThing): void;
     }
 
     /**
      * Generator Function to create IThingGroupCheck Functions.
      */
-    interface IThingGroupCheckGenerator {
+    export interface IThingGroupCheckGenerator {
         (): IThingGroupCheck;
     }
 
     /**
      * Generator Function to create IThingHitCheck Functions.
      */
-    interface IThingHitsCheckGenerator {
+    export interface IThingHitsCheckGenerator {
         (): IThingHitsCheck;
     }
 
     /**
      * Generator Function to create IThingHitCheck Functions.
      */
-    interface IThingHitCheckGenerator {
+    export interface IThingHitCheckGenerator {
         (): IThingHitCheck;
     }
 
     /**
      * Generator Function to generate IThingHitFunction Functions.
      */
-    interface IThingHitFunctionGenerator {
+    export interface IThingHitFunctionGenerator {
         (): IThingHitFunction;
     }
 
     /**
      * Container to hold IThingGroupCheck Functions, keyed by their respective group.
      */
-    interface IThingGroupCheckContainer {
+    export interface IThingGroupCheckContainer {
         [i: string]: IThingGroupCheck;
     }
 
     /**
      * Container to hold IThingHitsCheck Functions, keyed by their respective type.
      */
-    interface IThingHitsCheckContainer {
+    export interface IThingHitsCheckContainer {
         [i: string]: IThingHitsCheck;
     }
 
     /**
      * Container to hold IThingHitCheck Functions, keyed by their respective group.
      */
-    interface IThingHitCheckContainer {
+    export interface IThingHitCheckContainer {
         [i: string]: IThingHitCheck;
     }
 
     /**
      * Container to hold IThingHitFunction groups, keyed by their respective types.
      */
-    interface IThingHitFunctionContainer {
+    export interface IThingHitFunctionContainer {
         [i: string]: IThingHitFunction;
     }
 
@@ -116,7 +128,7 @@ declare module ThingHittr {
      * Container to hold IThingHitCheckContainer containers, keyed by their 
      * respective types.
      */
-    interface IThingHitCheckGroupContainer {
+    export interface IThingHitCheckGroupContainer {
         [i: string]: IThingHitCheckContainer;
     }
 
@@ -124,7 +136,7 @@ declare module ThingHittr {
      * Container to hold IThingHitFunctionContainer containers, keyed by their 
      * respective groups.
      */
-    interface IThingHitFunctionGroupContainer {
+    export interface IThingHitFunctionGroupContainer {
         [i: string]: IThingHitFunctionContainer;
     }
 
@@ -132,7 +144,7 @@ declare module ThingHittr {
      * Container to hold IThingGroupCheckGenerator Functions, keyed by their
      * respective groups.
      */
-    interface IThingGroupCheckGeneratorContainer {
+    export interface IThingGroupCheckGeneratorContainer {
         [i: string]: IThingGroupCheckGenerator;
     }
 
@@ -140,7 +152,7 @@ declare module ThingHittr {
      * Container to hold IThingHitCheckGenerator Functions, keyed by their 
      * respective groups.
      */
-    interface IThingHitCheckGeneratorContainer {
+    export interface IThingHitCheckGeneratorContainer {
         [i: string]: IThingHitCheckGenerator;
     }
 
@@ -148,7 +160,7 @@ declare module ThingHittr {
      * Container to hold IThingHitFunctionGenerator Functions, keyed by their
      * respective types.
      */
-    interface IThingHitFunctionGeneratorContainer {
+    export interface IThingHitFunctionGeneratorContainer {
         [i: string]: IThingHitFunctionGenerator;
     }
 
@@ -156,7 +168,7 @@ declare module ThingHittr {
      * Container to hold IThingHitCheckGeneratorContainer containers, keyed by their
      * respective groups.
      */
-    interface IThingHitCheckGeneratorGroupContainer {
+    export interface IThingHitCheckGeneratorGroupContainer {
         [i: string]: IThingHitCheckGeneratorContainer;
     }
 
@@ -164,14 +176,14 @@ declare module ThingHittr {
      * Container to hold IThingHitFunctionGeneratorContainer containers, keyed by
      * their respective groups.
      */
-    interface IThingHitFunctionGeneratorGroupContainer {
+    export interface IThingHitFunctionGeneratorGroupContainer {
         [i: string]: IThingHitFunctionGeneratorContainer;
     }
 
     /**
      * Cache lookup for whether a Thing has had its hit checks generated.
      */
-    interface IThingGeneratedListing {
+    export interface IThingGeneratedListing {
         [i: string]: boolean;
     }
 

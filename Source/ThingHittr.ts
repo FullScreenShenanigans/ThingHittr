@@ -1,5 +1,11 @@
-/// <reference path="References/QuadsKeepr.d.ts" />
+// @echo '/// <reference path="QuadsKeepr-0.2.1.ts" />'
+
+// @ifdef INCLUDE_DEFINITIONS
+/// <reference path="References/QuadsKeepr-0.2.1.ts" />
 /// <reference path="ThingHittr.d.ts" />
+// @endif
+
+// @include ../Source/ThingHittr.d.ts
 
 module ThingHittr {
     "use strict";
@@ -11,51 +17,73 @@ module ThingHittr {
      * optimizations to help reduce over-reoptimization of Functions.
      */
     export class ThingHittr implements IThingHittr {
-        // Contains the Functions used to completely check the hits of a single
-        // Thing (publically available).
+        /**
+         * Contains the Functions used to completely check the hits of a single Thing.
+         */
         public checkHitsOf: IThingHitsCheckContainer;
 
-        // Names of groups to check collisions within.
+        /**
+         * Names of groups to check collisions within Quadrants.
+         */
         private groupNames: string[];
 
-        // Check Functions for Things within groups to see if they're able to
-        // collide in the first place.
+        /**
+         * Check Functions for Things within groups to see if they're able to
+         * collide in the first place.
+         */
         private globalChecks: IThingGroupCheckContainer;
 
-        // Collision detection Functions to check two Things for collision.
+        /**
+         * Collision detection Functions to check two Things for collision.
+         */
         private hitChecks: IThingHitCheckGroupContainer;
 
-        // Hit Function callbacks for when two Things do collide.
+        /**
+         * Hit Function callbacks for when two Things do collide.
+         */
         private hitFunctions: IThingHitFunctionGroupContainer;
 
-        // Function generators for globalChecks.
+        /**
+         * Function generators for globalChecks.
+         */
         private globalCheckGenerators: IThingGroupCheckGeneratorContainer;
 
-        // Function generators for hitChecks.
+        /**
+         * Function generators for hitChecks.
+         */
         private hitCheckGenerators: IThingHitCheckGeneratorGroupContainer;
 
-        // Function generators for hitFunctions.
+        /**
+         * Function generators for hitFunctions.
+         */
         private hitFunctionGenerators: IThingHitFunctionGeneratorGroupContainer;
 
-        // A listing of which groupNames have had their hitCheck cached.
+        /**
+         * A listing of which groupNames have had their hitCheck cached.
+         */
         private cachedGroupNames: IThingGeneratedListing;
 
-        // A listing of which types have had their checkHitsOf cached.
+        /**
+         * A listing of which types have had their checkHitsOf cached.
+         */
         private cachedTypeNames: IThingGeneratedListing;
 
-        // The key under which Things store their number of quadrants.
+        /**
+         * The key under which Things store their number of quadrants.
+         */
         private keyNumQuads: string;
 
-        // They key under which Things store their quadrants.
+        /**
+         * The key under which Things store their quadrants.
+         */
         private keyQuadrants: string;
 
-        // The key under which Things store which group they fall under.
+        /**
+         * THe key under which Things store which group they fall under.
+         */
         private keyGroupName: string;
 
         /**
-         * Resets the ThingHittr.
-         * 
-         * @constructor
          * @param {IThingHittrSettings} settings
          */
         constructor(settings: IThingHittrSettings) {
